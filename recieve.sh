@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ $# -lt 1 ];
+if [ $# -ne 2 ];
 then
-	echo "Usage: ./recieve.sh [output filename]"
+	echo "Usage: ./recieve.sh [output filename] [encryption password]"
 	exit 1
 fi
 
@@ -13,7 +13,7 @@ shasum="$(nc -l 1235)"
 echo "Waiting for file sender..."
 sleep 0.5
 
-nc -l 1234 | openssl enc -aes-256-cbc -d -base64 -k your_password_here -out a.xz; rm -f a; xz -d a.xz
+nc -l 1234 | openssl enc -aes-256-cbc -d -base64 -k "$2" -out a.xz; rm -f a; xz -d a.xz
 
 if [ "$shasum" != "$(openssl dgst -sha256 a | awk '{print $2}')" ];
 then
